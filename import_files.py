@@ -21,15 +21,13 @@ def main():
 
     excel_files = st.file_uploader("Steg 3: Last opp excel eksport fil(er) fra Omega FDV krav", type="xlsx", accept_multiple_files=True)
 
-    if excel_files is not None:
-        df = [pd.read_excel(file) for file in excel_files]
-        df1 = pd.concat(df)
-        df2 = df1.copy()
+    if excel_files:
+        df1 = pd.concat([pd.read_excel(file) for file in excel_files])
         df1.rename(columns=replace_columns_df, inplace=True)
+        df2 = df1.copy()
         df1 = df1[df1_cols]
         df1 = create_doc_attributes(df1)
         df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format')
-        df2.rename(columns=replace_columns_df, inplace=True)
         df2 = df2[df2_cols]
         df2.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
         st.dataframe(df2.merge(df1))
