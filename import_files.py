@@ -19,15 +19,16 @@ if facility:
 
 def main():
 
-    excel_file = st.file_uploader("Steg 3: Last opp excel eksport fra Omega FDV krav", type="xlsx")
+    excel_files = st.file_uploader("Steg 3: Last opp excel eksport fil(er) fra Omega FDV krav", type="xlsx", accept_multiple_files=True)
 
-    if excel_file is not None:
-        df1 = pd.read_excel(excel_file)
+    if excel_files is not None:
+        df = [pd.read_excel(file) for file in excel_files]
+        df1 = pd.concat(df)
+        df2 = df1.copy()
         df1.rename(columns=replace_columns_df, inplace=True)
         df1 = df1[df1_cols]
         df1 = create_doc_attributes(df1)
         df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format')
-        df2 = pd.read_excel(excel_file)
         df2.rename(columns=replace_columns_df, inplace=True)
         df2 = df2[df2_cols]
         df2.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
@@ -70,9 +71,10 @@ def main():
 
 
 def get_doc_attributes(doc_type, index=0):
-    """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i dictionary"""
+    """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i doc_dict"""
 
     doc_dict = {'XD': ['Målskisse', 'TEGNINGER', 'MONT'],
+                'XF': ['Fundamenttegning', 'TEGNINGER', 'FUNDT'],
                 'XK': ['Interne strømløpsskjema', 'TEGNINGER', 'SKJEMA'],
                 'XQ': ['Stativtegning', 'TEGNINGER', 'MONT'],
                 }
@@ -327,7 +329,7 @@ def import_file_mch_codes(df, error):
     # oppretter mal for importfil
     IMPORT_FILE_MCH_CODES = pd.DataFrame(columns=['FILE_NAME', 'CONTRACT', 'MCH_CODE'])
 
-    # fjerner
+    # fjerner linjer som ikke inneholder sammenslåtte krav
     df = df[df['Antall sammenslåtte krav'] != 1]
 
     # splitter rad dersom den inneholder flere MchKoder
