@@ -216,10 +216,10 @@ def import_documents(df):
 def import_drawings(df):
 
     IMPORT_FILE = pd.DataFrame(columns=['DOC_CLASS', 'DOC_NO', 'DOC_SHEET', 'DOC_REV', 'FORMAT_SIZE', 'REV_NO',
-                                       'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
-                                       'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
-                                       'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
-                                       'MCH_CODE', 'CONTRACT', 'REFERANSE'])
+       'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
+       'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
+       'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
+       'MCH_CODE', 'CONTRACT', 'REFERANSE'])
 
     IMPORT_FILE.MCH_CODE = df['Mch Code']
     IMPORT_FILE.TITLE = df['Ny tittel']
