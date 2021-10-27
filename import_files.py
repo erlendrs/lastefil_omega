@@ -10,7 +10,7 @@ st.title('Lag importfil til IFS')
 username = st.text_input(label='Steg 1: Skriv inn ditt kortnavn')
 
 if username:
-    st.success(f'Kortnavn lagret')
+    st.success(f'Kortnavn lagret som: {username.upper()}')
 
 facility = st.text_input(label='Steg 2: Skriv inn kortnavn på anlegg')
 
