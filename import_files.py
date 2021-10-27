@@ -12,10 +12,10 @@ username = st.text_input(label='Steg 1: Skriv inn ditt kortnavn')
 if username:
     st.success(f'Kortnavn lagret')
 
-substation = st.text_input(label='Steg 2: Skriv inn kortnavn på anlegg')
+facility = st.text_input(label='Steg 2: Skriv inn kortnavn på anlegg')
 
-if substation:
-    st.success(f'Du har valgt {substation} stasjon')
+if facility:
+    st.success(f'Du har valgt {facility}')
 
 def main():
 
@@ -34,7 +34,7 @@ def main():
         st.dataframe(df2.merge(df1))
         st.success('Import av eksportfil fra Omega 365 var velykket')
 
-    merge_button = st.button('Slå sammen kravsliste og eRoom export')
+    merge_button = st.button('Lag lastefil til IFS')
 
     if merge_button:
 
@@ -70,14 +70,12 @@ def main():
 
 
 def get_doc_attributes(doc_type, index=0):
-    """Engelsk dokumenttype (key value) henter norsk dokumenttype (default index=0), IFS klasse (index=1) og
-    format (index=2) fra liste i dictionary"""
-
-    doc_type = doc_type.replace("_", '')
+    """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i dictionary"""
 
     doc_dict = {'XD': ['Målskisse', 'TEGNINGER', 'MONT'],
+                'XK': ['Interne strømløpsskjema', 'TEGNINGER', 'SKJEMA'],
                 'XQ': ['Stativtegning', 'TEGNINGER', 'MONT'],
-                'XK': ['Interne strømløpsskjema', 'TEGNINGER', 'SKJEMA']}
+                }
 
     if doc_type in doc_dict.keys():
         return doc_dict.get(doc_type)[index]
@@ -89,7 +87,6 @@ def create_doc_attributes(df):
     """Bruker get_doc_attributes til å fylle ut dokumenttype, klasse og format på df """
 
     df['Dokumenttype'] = df['Dokumenttype'].apply(lambda x: x.split(' ')[0])
-    df['Dokumentype_Temp'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
     df['Ifs klasse'] = df['Dokumenttype'].apply(get_doc_attributes, index=1)
     df['Ifs format'] = df['Dokumenttype'].apply(get_doc_attributes, index=2)
     df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
@@ -99,7 +96,7 @@ def create_doc_attributes(df):
 def create_new_document_titles(df):
     """Lager ny tittel bsasert på dokumenttype, leverandørs tittel, dokumentnummer og anleggskode"""
 
-    df['Ny tittel'] = df['Dokumenttype'] + '_ ' + df['Title'] + ', ' +  df['Dokumentnummer'] + f', {substation} '
+    df['Ny tittel'] = df['Dokumenttype'] + '_ ' + df['Title'] + ', ' +  df['Dokumentnummer'] + f', {facility} '
 
     return df
 
