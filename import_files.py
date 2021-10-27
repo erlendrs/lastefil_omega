@@ -43,7 +43,7 @@ def main():
             df = create_new_document_titles(df)
             IMPORT_FILE = create_import_file(df)
             st.dataframe(IMPORT_FILE)
-            date = pd.datetime.today().strftime("%d.%m.%y")
+            date = dt.datetime.today().strftime("%d.%m.%y")
             number_of_files = IMPORT_FILE.FILE_TYPE.count() + IMPORT_FILE.FILE_TYPE2.count()
             st.success("Opprettelse av importfil til IFS var vellykket!")
             csv1 = IMPORT_FILE.to_csv(sep=';', encoding='latin-1', index=True)
@@ -89,7 +89,7 @@ def create_doc_attributes(df):
     """Bruker get_doc_attributes til å fylle ut dokumenttype, klasse og format på df """
 
     df['Dokumenttype'] = df['Dokumenttype'].apply(lambda x: x.split(' ')[0])
-    df['Doktype'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
+    df['Dokumentype_Temp'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
     df['Ifs klasse'] = df['Dokumenttype'].apply(get_doc_attributes, index=1)
     df['Ifs format'] = df['Dokumenttype'].apply(get_doc_attributes, index=2)
     df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
