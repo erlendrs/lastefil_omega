@@ -176,10 +176,10 @@ def create_filetype(filename):
 def import_documents(df):
 
     IMPORT_FILE = pd.DataFrame(columns=['DOC_CLASS', 'DOC_NO', 'DOC_SHEET', 'DOC_REV', 'FORMAT_SIZE', 'REV_NO',
-       'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
-       'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
-       'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
-       'MCH_CODE', 'CONTRACT', 'REFERANSE'])
+                                       'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
+                                       'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
+                                       'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
+                                       'MCH_CODE', 'CONTRACT', 'REFERANSE'])
 
     IMPORT_FILE.TITLE = df['Ny tittel']
     IMPORT_FILE.FILE_NAME = list(df['FileName'].apply(lambda x: x.strip()))
@@ -216,10 +216,10 @@ def import_documents(df):
 def import_drawings(df):
 
     IMPORT_FILE = pd.DataFrame(columns=['DOC_CLASS', 'DOC_NO', 'DOC_SHEET', 'DOC_REV', 'FORMAT_SIZE', 'REV_NO',
-                                     'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
-                                     'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
-                                     'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
-                                     'MCH_CODE', 'CONTRACT', 'REFERANSE'])
+                                       'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
+                                       'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
+                                       'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
+                                       'MCH_CODE', 'CONTRACT', 'REFERANSE'])
 
     IMPORT_FILE.MCH_CODE = df['Mch Code']
     IMPORT_FILE.TITLE = df['Ny tittel']
@@ -253,11 +253,6 @@ def import_drawings(df):
     IMPORT_FILE.dropna(subset=['DOC_CLASS', 'FORMAT_SIZE'], inplace=True)
     IMPORT_FILE.set_index('DOC_CLASS', inplace=True)
     IMPORT_FILE.MCH_CODE = IMPORT_FILE.MCH_CODE.apply(str).apply(lambda x: x.split(';')[0])  # hent den første mchkoden fra liste
-    IMPORT_FILE = IMPORT_FILE[['DOC_NO', 'DOC_SHEET', 'DOC_REV', 'FORMAT_SIZE', 'REV_NO',
-                         'TITLE', 'DOC_TYPE', 'INFO', 'FILE_NAME', 'LOCATION_NAME', 'PATH',
-                         'FILE_TYPE', 'FILE_NAME2', 'FILE_TYPE2', 'DOC_TYPE2', 'FILE_NAME3',
-                         'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
-                         'MCH_CODE', 'CONTRACT', 'REFERANSE']]
     return IMPORT_FILE
 
 
