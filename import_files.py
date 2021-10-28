@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
+from pandas.errors import MergeError
 import datetime as dt
 import re
 import base64
@@ -32,7 +33,7 @@ def main():
         df2.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
         st.dataframe(df2.merge(df1))
         st.success('Import av eksportfil fra Omega 365 var velykket')
-
+        
     merge_button = st.button('Lag lastefil til IFS')
 
     if merge_button:
@@ -66,12 +67,14 @@ def main():
 
         except UnboundLocalError:
             st.error('Fil mangler')
-
+        
+        
 
 def get_doc_attributes(doc_type, index=0):
     """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i doc_dict"""
 
-    doc_dict = {'XD': ['Målskisse', 'TEGNINGER', 'MONT'],
+    doc_dict = {'RP': ['Prøveprotokoll', 'ANLEGGSDOK', 'PRPROT'],
+                'XD': ['Målskisse', 'TEGNINGER', 'MONT'],
                 'XF': ['Fundamenttegning', 'TEGNINGER', 'FUNDT'],
                 'XK': ['Interne strømløpsskjema', 'TEGNINGER', 'SKJEMA'],
                 'XQ': ['Stativtegning', 'TEGNINGER', 'MONT'],
@@ -80,7 +83,7 @@ def get_doc_attributes(doc_type, index=0):
     if doc_type in doc_dict.keys():
         return doc_dict.get(doc_type)[index]
     else:
-        return np.nan
+        return False
 
 
 def create_doc_attributes(df):
@@ -94,9 +97,9 @@ def create_doc_attributes(df):
     return df
 
 def create_new_document_titles(df):
-    """Lager ny tittel bsasert på dokumenttype, leverandørs tittel, dokumentnummer og anleggskode"""
+    """Lager ny dokumenttittel bsasert på dokumenttype, leverandørs tittel, dokumentnummer og anleggskode"""
 
-    df['Ny tittel'] = df['Dokumenttype'] + '_ ' + df['Title'] + ', ' +  df['Dokumentnummer'] + f', {facility} '
+    df['Dokumenttittel'] = df['Dokumenttype'] + '_ ' + df['Title'] + ', ' +  df['Dokumentnummer'] + f', {facility} '
 
     return df
 
@@ -179,7 +182,7 @@ def import_documents(df):
                                        'FILE_TYPE3', 'DOC_TYPE3', 'DT_CRE', 'USER_CREATED', 'ROWSTATE',
                                        'MCH_CODE', 'CONTRACT', 'REFERANSE'])
 
-    IMPORT_FILE.TITLE = df['Ny tittel']
+    IMPORT_FILE.TITLE = df['Dokumenttittel']
     IMPORT_FILE.FILE_NAME = list(df['FileName'].apply(lambda x: x.strip()))
     IMPORT_FILE.DOC_CLASS = df['Ifs klasse']
     IMPORT_FILE.DOC_NO = np.nan
@@ -220,7 +223,7 @@ def import_drawings(df):
        'MCH_CODE', 'CONTRACT', 'REFERANSE'])
 
     IMPORT_FILE.MCH_CODE = df['Mch Code']
-    IMPORT_FILE.TITLE = df['Ny tittel']
+    IMPORT_FILE.TITLE = df['Dokumenttittel']
     IMPORT_FILE.DOC_CLASS = df['Ifs klasse']
     IMPORT_FILE.FORMAT_SIZE = df['Ifs format']
 
