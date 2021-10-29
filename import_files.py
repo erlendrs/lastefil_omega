@@ -83,7 +83,7 @@ def get_doc_attributes(doc_type, index=0):
     if doc_type in doc_dict.keys():
         return doc_dict.get(doc_type)[index]
     else:
-        return False
+        return np.nan
 
 
 def create_doc_attributes(df):
