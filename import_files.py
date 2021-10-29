@@ -161,13 +161,13 @@ def merge_csv_and_excel(df1, df2, column):
     return df1.merge(df2, on=column)
 
 
-file_extensions = ('pdf', 'xlsx', 'jpg', 'dwg', 'zip', 'PDF', 'XLSX', 'JPG', 'DWG', 'ZIP')
+file_extensions = ('docx', 'pdf', 'xlsx', 'jpg', 'dwg', 'zip') # 'PDF', 'XLSX', 'JPG', 'DWG', 'ZIP')
 
 
 def create_filetype(filename):
     """Fyll ut felt FILE_TYPE basert på filekstensjon"""
 
-    filename = str(filename)
+    filename = str(filename).lower()
 
     if filename.endswith(file_extensions):
         return [word for word in filename.split('.')][-1].upper()
