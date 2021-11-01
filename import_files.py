@@ -1,10 +1,10 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from pandas.errors import MergeError
 import datetime as dt
 import re
 import base64
+from config import doc_dict
 
 st.title('Lag importfil til IFS')
 
@@ -73,13 +73,6 @@ def main():
 def get_doc_attributes(doc_type, index=0):
     """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i doc_dict"""
 
-    doc_dict = {'RP': ['Prøveprotokoll', 'ANLEGGSDOK', 'PRPROT'],
-                'XD': ['Målskisse', 'TEGNINGER', 'MONT'],
-                'XF': ['Fundamenttegning', 'TEGNINGER', 'FUNDT'],
-                'XK': ['Interne strømløpsskjema', 'TEGNINGER', 'SKJEMA'],
-                'XQ': ['Stativtegning', 'TEGNINGER', 'MONT'],
-                }
-
     if doc_type in doc_dict.keys():
         return doc_dict.get(doc_type)[index]
     else:
@@ -92,7 +85,7 @@ def create_doc_attributes(df):
     df['Dokumenttype'] = df['Dokumenttype'].apply(lambda x: x.split(' ')[0])
     df['Ifs klasse'] = df['Dokumenttype'].apply(get_doc_attributes, index=1)
     df['Ifs format'] = df['Dokumenttype'].apply(get_doc_attributes, index=2)
-    df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes, index=0)
+    df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes , index=0)
 
     return df
 
