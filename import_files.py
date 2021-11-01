@@ -39,9 +39,9 @@ def main():
     if merge_button:
 
         try:
-            df = merge_csv_and_excel(df1, df2, 'Dokumentnummer')
-            df = create_new_document_titles(df)
-            IMPORT_FILE = create_import_file(df)
+            merged_df = merge_dataframes(df1, df2, 'Dokumentnummer')
+            merged_df = create_new_document_titles(merged_df)
+            IMPORT_FILE = create_import_file(merged_df)
             st.dataframe(IMPORT_FILE)
             date = dt.datetime.today().strftime("%d.%m.%y")
             number_of_files = IMPORT_FILE.FILE_TYPE.count() + IMPORT_FILE.FILE_TYPE2.count()
@@ -51,18 +51,18 @@ def main():
             href1 = f'<a href="data:file/csv;base64,{b641}" download="Importfil til IFS med {number_of_files} filer ({date}).csv">Last ned CSV for filimport til IFS med {number_of_files} filer</a>'
             st.markdown(href1, unsafe_allow_html=True)
 
-            error_file = create_error_file(df)
+            error_file = create_error_file(merged_df)
 
-            IMPORT_FILE_MCH_CODES = import_file_mch_codes(df, error_file)
+            IMPORT_FILE_MCH_CODES = import_file_mch_codes(merged_df, error_file)
 
             if IMPORT_FILE_MCH_CODES.empty != True:
                 st.dataframe(IMPORT_FILE_MCH_CODES)
                 st.success('Opprettelse av importfil for objektkoblinger til IFS var vellykket!')
                 number_of_objects = IMPORT_FILE_MCH_CODES.MCH_CODE.count()
-                number_of_objects_files = IMPORT_FILE_MCH_CODES.reset_index()['FILE_NAME'].nunique()
+                number_of_files = IMPORT_FILE_MCH_CODES.reset_index()['FILE_NAME'].nunique()
                 csv2 = IMPORT_FILE_MCH_CODES.to_csv(sep=';', encoding='latin-1', index=True)
                 b642 = base64.b64encode(csv2.encode('latin-1')).decode()
-                href2 = f'<a href="data:file/csv;base64,{b642}" download="IMPORT_FILE IFS med {number_of_objects} objektkoblinger ({date}).csv">Last ned CSV fil for import av {number_of_objects} objektkoblinger til IFS for {number_of_objects_files} filer</a>'
+                href2 = f'<a href="data:file/csv;base64,{b642}" download="IMPORT_FILE IFS med {number_of_objects} objektkoblinger ({date}).csv">Last ned CSV fil for import av {number_of_objects} objektkoblinger til IFS for {number_of_files} filer</a>'
                 st.markdown(href2, unsafe_allow_html=True)
 
         except UnboundLocalError:
@@ -146,7 +146,7 @@ def split_rows(df, column, sep=',', keep=False):
     return new_df
 
 
-def merge_csv_and_excel(df1, df2, column):
+def merge_dataframes(df1, df2, column):
 
     df1 = df1.copy()
     df2 = df2.copy()
