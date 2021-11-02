@@ -4,7 +4,7 @@ import pandas as pd
 import datetime as dt
 import re
 import base64
-from config import doc_dict
+from config import doc_dict, file_extensions
 
 st.title('Lag importfil til IFS')
 
@@ -25,13 +25,10 @@ def main():
     if excel_files:
         df1 = pd.concat([pd.read_excel(file).astype(str) for file in excel_files])
         df1.rename(columns=replace_columns_df, inplace=True)
-        df2 = df1.copy()
         df1 = df1[df1_cols]
         df1 = create_doc_attributes(df1)
-        df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format')
-        df2 = df2[df2_cols]
-        df2.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
-        st.dataframe(df2.merge(df1))
+        df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format', 'Title', 'FileName')
+        st.dataframe(df1)
         st.success('Import av eksportfil fra Omega 365 var velykket')
         
     merge_button = st.button('Lag lastefil til IFS')
@@ -39,9 +36,8 @@ def main():
     if merge_button:
 
         try:
-            merged_df = merge_dataframes(df1, df2, 'Dokumentnummer')
-            merged_df = create_new_document_titles(merged_df)
-            IMPORT_FILE = create_import_file(merged_df)
+            df1 = create_new_document_titles(df1)
+            IMPORT_FILE = create_import_file(df1)
             st.dataframe(IMPORT_FILE)
             date = dt.datetime.today().strftime("%d.%m.%y")
             number_of_files = IMPORT_FILE.FILE_TYPE.count() + IMPORT_FILE.FILE_TYPE2.count()
@@ -51,9 +47,9 @@ def main():
             href1 = f'<a href="data:file/csv;base64,{b641}" download="Importfil til IFS med {number_of_files} filer ({date}).csv">Last ned CSV for filimport til IFS med {number_of_files} filer</a>'
             st.markdown(href1, unsafe_allow_html=True)
 
-            error_file = create_error_file(merged_df)
+            error_file = create_error_file(df1)
 
-            IMPORT_FILE_MCH_CODES = import_file_mch_codes(merged_df, error_file)
+            IMPORT_FILE_MCH_CODES = import_file_mch_codes(df1, error_file)
 
             if IMPORT_FILE_MCH_CODES.empty != True:
                 st.dataframe(IMPORT_FILE_MCH_CODES)
@@ -144,17 +140,6 @@ def split_rows(df, column, sep=',', keep=False):
     new_df[column] = new_values
 
     return new_df
-
-
-def merge_dataframes(df1, df2, column):
-
-    df1 = df1.copy()
-    df2 = df2.copy()
-
-    return df1.merge(df2, on=column)
-
-
-file_extensions = ('docx', 'pdf', 'xlsx', 'jpg', 'dwg', 'zip') # 'PDF', 'XLSX', 'JPG', 'DWG', 'ZIP')
 
 
 def create_filetype(filename):
@@ -333,8 +318,7 @@ def import_file_mch_codes(df, error):
 
     return IMPORT_FILE_MCH_CODES
 
-df1_cols = ['Dokumentnummer','Mch Code', 'Mch Name', 'Dokumenttype',]
-df2_cols = ['Dokumentnummer', 'Title', 'FileName', ]
+df1_cols = ['Dokumentnummer','Mch Code', 'Mch Name', 'Dokumenttype', 'Title', 'FileName']
 replace_columns_df = {'ObjectName': 'Mch Code', 'DocType': 'Dokumenttype', 'ObjectDescription': 'Mch Name', 'ContractorDocumentNo':'Dokumentnummer'}
 
 if __name__ == "__main__":
