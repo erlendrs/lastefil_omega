@@ -75,7 +75,6 @@ def get_doc_attributes(doc_type, key=0):
     else:
         return np.nan
 
-
 def create_doc_attributes(df):
     """Bruker get_doc_attributes til å fylle ut dokumenttype, klasse og format på df """
 
