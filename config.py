@@ -1,4 +1,6 @@
-file_extensions = ('docx', 'pdf', 'xlsx', 'jpg', 'dwg', 'zip') 
+file_extensions = ('docx', 'pdf', 'xlsx', 'jpg', 'dwg', 'zip')
+
+column_dict = {'ObjectName': 'Mch Code', 'DocType': 'Dokumenttype', 'ObjectDescription': 'Mch Name', 'ContractorDocumentNo':'Dokumentnummer'}
 
 doc_dict = {
             # DOKUMENTER

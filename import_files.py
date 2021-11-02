@@ -4,7 +4,7 @@ import pandas as pd
 import datetime as dt
 import re
 import base64
-from config import doc_dict, file_extensions
+from config import doc_dict, column_dict, file_extensions
 
 st.title('Lag importfil til IFS')
 
@@ -24,11 +24,12 @@ def main():
 
     if excel_files:
         df1 = pd.concat([pd.read_excel(file).astype(str) for file in excel_files])
-        df1.rename(columns=replace_columns_df, inplace=True)
+        df1.rename(columns=column_dict, inplace=True)
         df1 = df1[keep_columns]
         df1 = create_doc_attributes(df1)
         df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format', 'Title', 'FileName')
         df1.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
+        df1 = create_new_document_titles(df1)
         st.dataframe(df1)
         st.success('Import av eksportfil fra Omega 365 var velykket')
         
@@ -37,7 +38,6 @@ def main():
     if merge_button:
 
         try:
-            df1 = create_new_document_titles(df1)
             IMPORT_FILE = create_import_file(df1)
             st.dataframe(IMPORT_FILE)
             date = dt.datetime.today().strftime("%d.%m.%y")
@@ -67,11 +67,11 @@ def main():
         
         
 
-def get_doc_attributes(doc_type, index=0):
+def get_doc_attributes(doc_type, key=0):
     """Omega 365 dokumentkode (key value) henter dokumenttype fra IFS (default index=0), IFS klasse (index=1) og IFS format (index=2) fra liste i doc_dict"""
 
     if doc_type in doc_dict.keys():
-        return doc_dict.get(doc_type)[index]
+        return doc_dict.get(doc_type)[key]
     else:
         return np.nan
 
@@ -80,9 +80,9 @@ def create_doc_attributes(df):
     """Bruker get_doc_attributes til å fylle ut dokumenttype, klasse og format på df """
 
     df['Dokumenttype'] = df['Dokumenttype'].apply(lambda x: x.split(' ')[0])
-    df['Ifs klasse'] = df['Dokumenttype'].apply(get_doc_attributes, index=1)
-    df['Ifs format'] = df['Dokumenttype'].apply(get_doc_attributes, index=2)
-    df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes , index=0)
+    df['Ifs klasse'] = df['Dokumenttype'].apply(get_doc_attributes, key=1)
+    df['Ifs format'] = df['Dokumenttype'].apply(get_doc_attributes, key=2)
+    df['Dokumenttype'] = df['Dokumenttype'].apply(get_doc_attributes , key=0)
 
     return df
 
@@ -320,7 +320,6 @@ def import_file_mch_codes(df, error):
     return IMPORT_FILE_MCH_CODES
 
 keep_columns = ['Dokumentnummer','Mch Code', 'Mch Name', 'Dokumenttype', 'Title', 'FileName']
-replace_columns_df = {'ObjectName': 'Mch Code', 'DocType': 'Dokumenttype', 'ObjectDescription': 'Mch Name', 'ContractorDocumentNo':'Dokumentnummer'}
 
 if __name__ == "__main__":
     main()
