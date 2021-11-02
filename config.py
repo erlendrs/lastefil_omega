@@ -1,4 +1,4 @@
-
+file_extensions = ('docx', 'pdf', 'xlsx', 'jpg', 'dwg', 'zip') 
 
 doc_dict = {
             # DOKUMENTER
