@@ -25,9 +25,10 @@ def main():
     if excel_files:
         df1 = pd.concat([pd.read_excel(file).astype(str) for file in excel_files])
         df1.rename(columns=replace_columns_df, inplace=True)
-        df1 = df1[df1_cols]
+        df1 = df1[keep_columns]
         df1 = create_doc_attributes(df1)
         df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format', 'Title', 'FileName')
+        df1.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
         st.dataframe(df1)
         st.success('Import av eksportfil fra Omega 365 var velykket')
         
@@ -318,7 +319,7 @@ def import_file_mch_codes(df, error):
 
     return IMPORT_FILE_MCH_CODES
 
-df1_cols = ['Dokumentnummer','Mch Code', 'Mch Name', 'Dokumenttype', 'Title', 'FileName']
+keep_columns = ['Dokumentnummer','Mch Code', 'Mch Name', 'Dokumenttype', 'Title', 'FileName']
 replace_columns_df = {'ObjectName': 'Mch Code', 'DocType': 'Dokumenttype', 'ObjectDescription': 'Mch Name', 'ContractorDocumentNo':'Dokumentnummer'}
 
 if __name__ == "__main__":
