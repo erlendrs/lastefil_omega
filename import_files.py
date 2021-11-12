@@ -27,7 +27,7 @@ def main():
         df1.rename(columns=column_dict, inplace=True)
         df1 = df1[keep_columns]
         df1 = create_doc_attributes(df1)
-        df1 = group_columns(df1,  'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format', 'Title', 'FileName')
+        df1 = group_columns(df1, 'Dokumentnummer','Dokumenttype', 'Ifs klasse', 'Ifs format', 'Title', 'FileName')
         df1.drop_duplicates(subset='Dokumentnummer', keep='first', inplace=True)
         df1 = create_new_document_titles(df1)
         st.dataframe(df1)
