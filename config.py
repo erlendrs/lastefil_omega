@@ -4,6 +4,7 @@ column_dict = {'ObjectName': 'Mch Code', 'DocType': 'Dokumenttype', 'ObjectDescr
 
 doc_dict = {
             # DOKUMENTER
+            'FP': ['FAT-rapport', 'ANLEGGSDOK', 'PRPROT'],
             'RP': ['Prøveprotokoll', 'ANLEGGSDOK', 'PRPROT'],
             'OM': ['Drift-, Montasje- og Vedlikeholdsmanual', 'ANLEGGSDOK', 'TEKDOK'],
             
