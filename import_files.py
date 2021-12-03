@@ -20,7 +20,7 @@ if facility:
 
 def main():
 
-    excel_files = st.file_uploader("Steg 3: Last opp excel eksport fil(er) fra Omega FDV krav", type="xlsx", accept_multiple_files=True)
+    excel_files = st.file_uploader("Steg 3: Last opp excel eksport fil(er)", type="xlsx", accept_multiple_files=True)
 
     if excel_files:
         df1 = pd.concat([pd.read_excel(file).astype(str) for file in excel_files])
