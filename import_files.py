@@ -6,9 +6,9 @@ import re
 import base64
 from config import doc_dict, column_dict, file_extensions
 
-st.title('Lag importfil til IFS')
+st.title('Lag importfil')
 
-username = st.text_input(label='Steg 1: Skriv inn ditt kortnavn')
+username = st.text_input(label='Steg 1: Skriv inn kortnavn')
 
 if username:
     st.success(f'Kortnavn lagret som: {username.upper()}')
