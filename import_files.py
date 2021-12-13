@@ -8,7 +8,7 @@ from config import doc_dict, column_dict, file_extensions
 
 st.title('Lag importfil')
 
-username = st.text_input(label='Steg 1: Skriv inn kortnavn')
+username = st.text_input(label='Steg 1: Skriv inn ditt kortnavn')
 
 if username:
     st.success(f'Kortnavn lagret som: {username.upper()}')
